@@ -32,8 +32,14 @@ import Beck from '../scenes/beck';
 import Infos from '../scenes/infos';
 import Contact from '../scenes/contact';
 import PrivacyLight from '../scenes/privacy-light';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import Status from '../scenes/status';
+import SurveyMenu from '../../assets/svg/SurveyMenu';
 
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+const StatusStack = createNativeStackNavigator();
 
 class Router extends React.Component {
   async componentDidMount() {
@@ -68,22 +74,34 @@ class Router extends React.Component {
     logEvents.logOpenPage(route.name);
   };
 
+  StatusStackScreen() {
+    return (
+      <StatusStack.Navigator>
+        <StatusStack.Screen
+          name="Status"
+          component={Status}
+          options={{
+            tabBarLabel: 'Mon état',
+            tabBarIcon: ({color}) => <SurveyMenu height={24} style={{color}} />,
+          }}
+        />
+      </StatusStack.Navigator>
+    );
+  }
+
   render() {
     return (
       <NavigationContainer
         ref={(r) => (this.navigationRef = r)}
         onStateChange={this.onStateChange}>
+        {/* <Tab.Navigator>
+          <Tab.Screen name="status" component={this.StatusStackScreen} />
+           <Tab.Screen name="Settings" component={SettingsStackScreen} /> 
+        </Tab.Navigator> */}
         <Stack.Navigator initialRouteName="tabs" headerMode="none">
           <Stack.Screen name="day-survey" component={DaySurveyScreen} />
           <Stack.Screen name="select-day" component={SelectDayScreen} />
           <Stack.Screen name="tabs" component={Tabs} />
-          {/* <Stack.Screen
-            name="question"
-            options={{animationEnabled: Platform.OS === 'ios'}}>
-            {({navigation, route}) => (
-              <SurveyScreen navigation={navigation} route={route} />
-            )}
-          </Stack.Screen> */}
           <Stack.Screen name="symptoms">
             {(props) => <SymptomScreen {...props} />}
           </Stack.Screen>
@@ -126,7 +144,6 @@ class Router extends React.Component {
           <Stack.Screen name="activate-beck" component={ActivateBeck} />
           <Stack.Screen name="view-beck" component={ViewBeck} />
           <Stack.Screen name="beck" component={Beck} />
-          {/* <Stack.Screen name="contribute" component={Contribute} /> */}
         </Stack.Navigator>
       </NavigationContainer>
     );
